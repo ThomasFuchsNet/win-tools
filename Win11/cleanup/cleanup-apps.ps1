@@ -4,6 +4,8 @@ param(
 
 
 $AppWhitelist = get-content $WhitelistPath
+cleanup-appx $AppWhitelist
+cleanup-provis $AppWhitelist
 cleanup-appx {
     param(
         [String[]] $AppX
@@ -23,7 +25,7 @@ cleanup-provis{
     foreach($app in $provis){
         $result =  Get-AppProvisionedPackage -online | ?{ $_.DisplayName -like $app.trim() }
         foreach($package in $result){
-            Remove-AppxProvisionedPackage -PackageName $package.PackageName
+            Remove-AppxProvisionedPackage -PackageName $package.PackageName -online
         }
     }
 }
