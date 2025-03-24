@@ -1,12 +1,15 @@
 param(
-    [String] $WhitelistPath = "$PSScriptRoot\..\res\winapps.whitelist"
+    [String] $ListPath = "$PSScriptRoot\..\res\winapps.whitelist",
+    [Switch] $Blacklist = $false
 )
+
+### Blacklist Removeal Logic ###
 function cleanup-appx {
     param(
         [String[]] $AppX
     )
     foreach($app in $appx){
-        $result = get-appxpackage -AllUsers | ?{ -not ($_.Name -like $app.trim()) }
+        $result = get-appxpackage -AllUsers | ?{ $_.Name -like $app.trim() }
         foreach($package in $result){
             Remove-Appxpackage -Package $package.PackageFullName -AllUsers
         }
@@ -18,7 +21,7 @@ function cleanup-provis{
         [String[]] $provis
     )
     foreach($app in $provis){
-        $result =  Get-AppProvisionedPackage -online | ?{ -not ($_.DisplayName -like $app.trim())}
+        $result =  Get-AppProvisionedPackage -online | ?{ $_.DisplayName -like $app.trim() }
         foreach($package in $result){
             Remove-AppxProvisionedPackage -PackageName $package.PackageName -online
         }
@@ -26,8 +29,22 @@ function cleanup-provis{
 }
 
 #### START #####
+$Applist = get-content $ListPath
 
-
-$AppWhitelist = get-content $WhitelistPath
-cleanup-appx $AppWhitelist
-cleanup-provis $AppWhitelist
+if(-not $Blacklist)
+{   
+    $bApps = get-appxpackage -AllUsers | %{$_.Name}
+    foreach ($app in $Applist){
+        $bApps = $bApps | ?{$_ -notlike $app}
+    }
+    $pApps = get-AppxProvisionedPackage -online | %{$_.DisplayName}
+    foreach($app in $pApps){
+        $pApps = $pApps | ?{$_ -notlike $app}
+    }
+    cleanup-appx $bApps
+    cleanup-provis $pApps
+}  
+else {
+    cleanup-appx $Applist
+    cleanup-provis $Applist
+}
