@@ -1,5 +1,5 @@
 param(
-    [String] $WhitelistPath = $PSScriptRoot\..\res\winapps.whitelist
+    [String] $WhitelistPath = "$PSScriptRoot\..\res\winapps.whitelist"
 )
 
 
