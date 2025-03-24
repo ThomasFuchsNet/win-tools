@@ -1,11 +1,6 @@
 param(
     [String] $WhitelistPath = "$PSScriptRoot\..\res\winapps.whitelist"
 )
-
-
-$AppWhitelist = get-content $WhitelistPath
-cleanup-appx $AppWhitelist
-cleanup-provis $AppWhitelist
 function cleanup-appx {
     param(
         [String[]] $AppX
@@ -29,3 +24,10 @@ function cleanup-provis{
         }
     }
 }
+
+#### START ####
+
+
+$AppWhitelist = get-content $WhitelistPath
+cleanup-appx $AppWhitelist
+cleanup-provis $AppWhitelist
