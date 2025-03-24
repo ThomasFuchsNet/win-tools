@@ -6,9 +6,9 @@ function cleanup-appx {
         [String[]] $AppX
     )
     foreach($app in $appx){
-        $result = get-appxpackage -AllUsers | ?{ $_.Name -like $app.trim() }
+        $result = get-appxpackage -AllUsers | ?{ -not ($_.Name -like $app.trim()) }
         foreach($package in $result){
-            Remove-Appxpackage -Package $package.PackageFullName -AllUsers -Force
+            Remove-Appxpackage -Package $package.PackageFullName -AllUsers
         }
     }
 }
@@ -18,14 +18,14 @@ function cleanup-provis{
         [String[]] $provis
     )
     foreach($app in $provis){
-        $result =  Get-AppProvisionedPackage -online | ?{ $_.DisplayName -like $app.trim() }
+        $result =  Get-AppProvisionedPackage -online | ?{ -not ($_.DisplayName -like $app.trim())}
         foreach($package in $result){
             Remove-AppxProvisionedPackage -PackageName $package.PackageName -online
         }
     }
 }
 
-#### START ####
+#### START #####
 
 
 $AppWhitelist = get-content $WhitelistPath
