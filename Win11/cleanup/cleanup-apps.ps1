@@ -6,7 +6,7 @@ param(
 $AppWhitelist = get-content $WhitelistPath
 cleanup-appx $AppWhitelist
 cleanup-provis $AppWhitelist
-cleanup-appx {
+function cleanup-appx {
     param(
         [String[]] $AppX
     )
@@ -18,7 +18,7 @@ cleanup-appx {
     }
 }
 
-cleanup-provis{
+function cleanup-provis{
     param(
         [String[]] $provis
     )
